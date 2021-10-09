@@ -1,0 +1,10 @@
+* success handling
+* verification of the 'text/plain' Content-Type
+* 'placeholder' record handling
+* checking for tabs, whitespace, commas within fields
+* URL decoding
+* CR/CRLF line-ending handling
+* handling of extension fields following ';'
+* comment handling
+* redirect handling
+* redirect handling to external domains (single 'hop')
