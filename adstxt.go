@@ -55,12 +55,25 @@ func parseVariable(line string) (Variable, string) {
 	return VariableUnspecified, ""
 }
 
+func processComment(line string) string {
+	idx := strings.Index(line, "#")
+	if idx == -1 {
+		return line
+	}
+	return line[:idx]
+}
+
 func Parse(in io.Reader) (AdsTxt, error) {
 	variables := map[Variable][]string{}
 
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
 		line := scanner.Text()
+		line = processComment(line)
+		if len(line) == 0 {
+			continue
+		}
+
 		variable, value := parseVariable(line)
 		if variable != VariableUnspecified {
 			variables[variable] = append(variables[variable], value)

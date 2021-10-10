@@ -5,7 +5,6 @@
 * URL decoding
 * CR/CRLF line-ending handling
 * handling of extension fields following ';'
-* comment handling
 * required field validation
 * whitespace & tab stripping
 * redirect handling

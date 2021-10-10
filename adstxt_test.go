@@ -69,4 +69,27 @@ contact=bar`)
 		}
 		assert.Equal(t, expected, adstxt.Variables)
 	})
+
+	t.Run("full-line comment", func(t *testing.T) {
+		rawAdsTxt := strings.NewReader(`#contact=foo
+contact=bar`)
+		adstxt, err := Parse(rawAdsTxt)
+		assert.NoError(t, err)
+		expected := map[Variable][]string{
+			Contact: []string{"bar"},
+		}
+		assert.Equal(t, expected, adstxt.Variables)
+	})
+
+	t.Run("partial-line comment", func(t *testing.T) {
+		rawAdsTxt := strings.NewReader(`contact=foo
+subdomain=bar#comment`)
+		adstxt, err := Parse(rawAdsTxt)
+		assert.NoError(t, err)
+		expected := map[Variable][]string{
+			Contact:   []string{"foo"},
+			Subdomain: []string{"bar"},
+		}
+		assert.Equal(t, expected, adstxt.Variables)
+	})
 }
