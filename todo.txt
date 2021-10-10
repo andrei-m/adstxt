@@ -1,8 +1,10 @@
+Parsing:
+* 'placeholder' record handling
+* handling of extension fields following ';'
+* URL decoding
+* required field validation
+Resolving:
 * success handling
 * verification of the 'text/plain' Content-Type
-* 'placeholder' record handling
-* URL decoding
-* handling of extension fields following ';'
-* required field validation
 * redirect handling
 * redirect handling to external domains (single 'hop')
