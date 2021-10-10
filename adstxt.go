@@ -2,6 +2,7 @@ package adstxt
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"strings"
 )
@@ -25,6 +26,11 @@ const (
 	Direct
 	Reseller
 )
+
+var strToRelationshipType = map[string]RelationshipType{
+	"DIRECT":   Direct,
+	"RESELLER": Reseller,
+}
 
 type Variable int
 
@@ -55,6 +61,31 @@ func parseVariable(line string) (Variable, string) {
 	return VariableUnspecified, ""
 }
 
+var (
+	errNoRecord                     = errors.New("no record")
+	errUnrecognizedRelationshipType = errors.New("unrecognized relationship type is neither DIRECT or RESELLER")
+)
+
+func parseRecord(line string) (Record, error) {
+	recordSplit := strings.Split(line, ",")
+	if len(recordSplit) < 3 {
+		return Record{}, errNoRecord
+	}
+	relationship := strToRelationshipType[strings.ToUpper(recordSplit[2])]
+	if relationship == RelationshipTypeUnspecified {
+		return Record{}, errUnrecognizedRelationshipType
+	}
+	record := Record{
+		AdSystemDomain:  recordSplit[0],
+		SellerAccountID: recordSplit[1],
+		Relationship:    relationship,
+	}
+	if len(recordSplit) > 3 {
+		record.CertAuthorityID = recordSplit[3]
+	}
+	return record, nil
+}
+
 func processComment(line string) string {
 	idx := strings.Index(line, "#")
 	if idx == -1 {
@@ -65,6 +96,7 @@ func processComment(line string) string {
 
 func Parse(in io.Reader) (AdsTxt, error) {
 	variables := map[Variable][]string{}
+	records := []Record{}
 
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
@@ -75,6 +107,15 @@ func Parse(in io.Reader) (AdsTxt, error) {
 			continue
 		}
 
+		record, err := parseRecord(line)
+		if err == errNoRecord {
+			// no-op; continue to parse a variable
+		} else if err != nil {
+			return AdsTxt{}, err
+		} else {
+			records = append(records, record)
+		}
+
 		variable, value := parseVariable(line)
 		if variable != VariableUnspecified {
 			variables[variable] = append(variables[variable], value)
@@ -83,5 +124,5 @@ func Parse(in io.Reader) (AdsTxt, error) {
 	if err := scanner.Err(); err != nil {
 		return AdsTxt{}, err
 	}
-	return AdsTxt{Variables: variables}, nil
+	return AdsTxt{Records: records, Variables: variables}, nil
 }

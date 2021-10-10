@@ -1,7 +1,6 @@
 * success handling
 * verification of the 'text/plain' Content-Type
 * 'placeholder' record handling
-* checking commas within fields
 * URL decoding
 * handling of extension fields following ';'
 * required field validation

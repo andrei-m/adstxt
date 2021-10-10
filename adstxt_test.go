@@ -107,4 +107,83 @@ subdomain=bar #comment`)
 		}
 		assert.Equal(t, expected, adstxt.Variables)
 	})
+
+	t.Run("DIRECT relationship record", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("foo,bar,DIRECT"))
+		assert.NoError(t, err)
+		expected := []Record{
+			{
+				AdSystemDomain:  "foo",
+				SellerAccountID: "bar",
+				Relationship:    Direct,
+			},
+		}
+		assert.Equal(t, expected, adstxt.Records)
+	})
+
+	t.Run("RESELLER relationship record", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("foo,bar,RESELLER"))
+		assert.NoError(t, err)
+		expected := []Record{
+			{
+				AdSystemDomain:  "foo",
+				SellerAccountID: "bar",
+				Relationship:    Reseller,
+			},
+		}
+		assert.Equal(t, expected, adstxt.Records)
+	})
+
+	t.Run("unknown relationship", func(t *testing.T) {
+		_, err := Parse(strings.NewReader("foo,bar,baz"))
+		assert.Equal(t, errUnrecognizedRelationshipType, err)
+	})
+
+	t.Run("record with certification authority ID", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("foo,bar,RESELLER,baz"))
+		assert.NoError(t, err)
+		expected := []Record{
+			{
+				AdSystemDomain:  "foo",
+				SellerAccountID: "bar",
+				Relationship:    Reseller,
+				CertAuthorityID: "baz",
+			},
+		}
+		assert.Equal(t, expected, adstxt.Records)
+	})
+
+	t.Run("file with all features", func(t *testing.T) {
+		rawAdsTxt := strings.NewReader(`
+# comment
+foo,bar,DIRECT,baz
+one,two,RESELLER
+
+# another comment
+contact=foo
+contact=foobar
+subdomain=bar #comment`)
+		adstxt, err := Parse(rawAdsTxt)
+		assert.NoError(t, err)
+		expected := AdsTxt{
+			Records: []Record{
+				{
+					AdSystemDomain:  "foo",
+					SellerAccountID: "bar",
+					Relationship:    Direct,
+					CertAuthorityID: "baz",
+				},
+				{
+					AdSystemDomain:  "one",
+					SellerAccountID: "two",
+					Relationship:    Reseller,
+				},
+			},
+			Variables: map[Variable][]string{
+				Contact:   []string{"foo", "foobar"},
+				Subdomain: []string{"bar"},
+			},
+		}
+		assert.Equal(t, expected, adstxt)
+	})
 }
