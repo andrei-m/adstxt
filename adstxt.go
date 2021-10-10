@@ -70,6 +70,7 @@ func Parse(in io.Reader) (AdsTxt, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = processComment(line)
+		line = strings.TrimSpace(line)
 		if len(line) == 0 {
 			continue
 		}

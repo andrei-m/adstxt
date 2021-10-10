@@ -92,4 +92,19 @@ subdomain=bar#comment`)
 		}
 		assert.Equal(t, expected, adstxt.Variables)
 	})
+
+	t.Run("whitespace and empty lines are trimmed", func(t *testing.T) {
+		rawAdsTxt := strings.NewReader(`
+contact=foo
+
+# another comment
+subdomain=bar #comment`)
+		adstxt, err := Parse(rawAdsTxt)
+		assert.NoError(t, err)
+		expected := map[Variable][]string{
+			Contact:   []string{"foo"},
+			Subdomain: []string{"bar"},
+		}
+		assert.Equal(t, expected, adstxt.Variables)
+	})
 }
