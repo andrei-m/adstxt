@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"strings"
+	"unicode"
 )
 
 type AdsTxt struct {
@@ -98,6 +99,15 @@ func processComment(line string) string {
 	return line[:idx]
 }
 
+func stripWhitespace(line string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, line)
+}
+
 func Parse(in io.Reader) (AdsTxt, error) {
 	variables := map[Variable][]string{}
 	records := []Record{}
@@ -106,7 +116,7 @@ func Parse(in io.Reader) (AdsTxt, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = processComment(line)
-		line = strings.TrimSpace(line)
+		line = stripWhitespace(line)
 		if len(line) == 0 {
 			continue
 		}

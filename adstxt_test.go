@@ -188,7 +188,7 @@ subdomain=bar #comment`)
 	})
 
 	t.Run("placeholder", func(t *testing.T) {
-		adstxt, err := Parse(strings.NewReader("placeholder.example.com,placeholder,DIRECT,placeholder"))
+		adstxt, err := Parse(strings.NewReader("placeholder.example.com, placeholder, DIRECT, placeholder"))
 		assert.NoError(t, err)
 		assert.Empty(t, adstxt.Records)
 	})
