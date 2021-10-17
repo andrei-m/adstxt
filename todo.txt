@@ -1,5 +1,3 @@
-Parsing:
-* handling of extension fields following ';'
 Resolving:
 * success handling
 * verification of the 'text/plain' Content-Type

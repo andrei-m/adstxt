@@ -216,6 +216,24 @@ subdomain=bar #comment`)
 		assert.NoError(t, err)
 		assert.Empty(t, adstxt.Records)
 	})
+
+	t.Run("extension fields", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("foo,bar,DIRECT,baz;one,two"))
+		assert.NoError(t, err)
+		expected := AdsTxt{
+			Records: []Record{
+				{
+					AdSystemDomain:  "foo",
+					SellerAccountID: "bar",
+					Relationship:    Direct,
+					CertAuthorityID: "baz",
+					Extension:       "one,two",
+				},
+			},
+			Variables: map[Variable][]string{},
+		}
+		assert.Equal(t, expected, adstxt)
+	})
 }
 
 func ExampleParse() {

@@ -19,6 +19,7 @@ type Record struct {
 	SellerAccountID string
 	Relationship    RelationshipType
 	CertAuthorityID string
+	Extension       string
 }
 
 func (r Record) isPlaceholder() bool {
@@ -75,6 +76,12 @@ var (
 )
 
 func parseRecord(line string) (Record, error) {
+	extension := ""
+	extensionSeparatorIdx := strings.Index(line, ";")
+	if extensionSeparatorIdx != -1 {
+		extension = line[extensionSeparatorIdx+1:]
+		line = line[:extensionSeparatorIdx]
+	}
 	recordSplit := strings.Split(line, ",")
 	if len(recordSplit) < 3 {
 		return Record{}, errNoRecord
@@ -103,6 +110,7 @@ func parseRecord(line string) (Record, error) {
 		AdSystemDomain:  decodedAdSystemDomain,
 		SellerAccountID: decodedSellerAccountId,
 		Relationship:    relationship,
+		Extension:       extension,
 	}
 	if len(recordSplit) > 3 {
 		decodedCertAuthorityID, err := url.QueryUnescape(recordSplit[3])
