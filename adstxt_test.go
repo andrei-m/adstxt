@@ -186,4 +186,20 @@ subdomain=bar #comment`)
 		}
 		assert.Equal(t, expected, adstxt)
 	})
+
+	t.Run("placeholder", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("placeholder.example.com,placeholder,DIRECT,placeholder"))
+		assert.NoError(t, err)
+		assert.Empty(t, adstxt.Records)
+	})
+}
+
+func Test_Record_isPlaceholder(t *testing.T) {
+	record := Record{}
+	assert.False(t, record.isPlaceholder())
+	placeholder := Record{
+		AdSystemDomain:  "placeholder.example.com",
+		SellerAccountID: "placeholder",
+	}
+	assert.True(t, placeholder.isPlaceholder())
 }

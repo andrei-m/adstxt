@@ -19,6 +19,10 @@ type Record struct {
 	CertAuthorityID string
 }
 
+func (r Record) isPlaceholder() bool {
+	return r.AdSystemDomain == "placeholder.example.com" && r.SellerAccountID == "placeholder"
+}
+
 type RelationshipType int
 
 const (
@@ -112,6 +116,8 @@ func Parse(in io.Reader) (AdsTxt, error) {
 			// no-op; continue to parse a variable
 		} else if err != nil {
 			return AdsTxt{}, err
+		} else if record.isPlaceholder() {
+			continue
 		} else {
 			records = append(records, record)
 		}
