@@ -230,7 +230,7 @@ contact=foobar
 subdomain=bar #comment`)
 	adstxt, err := Parse(rawAdsTxt)
 
-	fmt.Printf("error: %t\n", err == nil)
+	fmt.Printf("error: %t\n", err != nil)
 	fmt.Printf("record count: %d\n", len(adstxt.Records))
 	fmt.Printf("variable count: %d\n", len(adstxt.Variables))
 	// Output:
