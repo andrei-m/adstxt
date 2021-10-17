@@ -218,7 +218,7 @@ subdomain=bar #comment`)
 	})
 }
 
-func ExampleParse(t *testing.T) {
+func ExampleParse() {
 	rawAdsTxt := strings.NewReader(`# comment
 foo,bar,DIRECT,baz
 one,two,RESELLER
