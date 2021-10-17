@@ -121,6 +121,19 @@ subdomain=bar #comment`)
 		assert.Equal(t, expected, adstxt.Records)
 	})
 
+	t.Run("url-encoded comma in SellerAccountID", func(t *testing.T) {
+		adstxt, err := Parse(strings.NewReader("foo,foo%2Cbar,DIRECT"))
+		assert.NoError(t, err)
+		expected := []Record{
+			{
+				AdSystemDomain:  "foo",
+				SellerAccountID: "foo,bar",
+				Relationship:    Direct,
+			},
+		}
+		assert.Equal(t, expected, adstxt.Records)
+	})
+
 	t.Run("RESELLER relationship record", func(t *testing.T) {
 		adstxt, err := Parse(strings.NewReader("foo,bar,RESELLER"))
 		assert.NoError(t, err)

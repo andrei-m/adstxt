@@ -1,6 +1,5 @@
 Parsing:
 * handling of extension fields following ';'
-* URL decoding
 * required field validation
 Resolving:
 * success handling

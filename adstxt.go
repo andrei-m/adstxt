@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"net/url"
 	"strings"
 	"unicode"
 )
@@ -80,13 +81,27 @@ func parseRecord(line string) (Record, error) {
 	if relationship == RelationshipTypeUnspecified {
 		return Record{}, errUnrecognizedRelationshipType
 	}
+
+	decodedAdSystemDomain, err := url.QueryUnescape(recordSplit[0])
+	if err != nil {
+		return Record{}, err
+	}
+	decodedSellerAccountId, err := url.QueryUnescape(recordSplit[1])
+	if err != nil {
+		return Record{}, err
+	}
+
 	record := Record{
-		AdSystemDomain:  recordSplit[0],
-		SellerAccountID: recordSplit[1],
+		AdSystemDomain:  decodedAdSystemDomain,
+		SellerAccountID: decodedSellerAccountId,
 		Relationship:    relationship,
 	}
 	if len(recordSplit) > 3 {
-		record.CertAuthorityID = recordSplit[3]
+		decodedCertAuthorityID, err := url.QueryUnescape(recordSplit[3])
+		if err != nil {
+			return Record{}, err
+		}
+		record.CertAuthorityID = decodedCertAuthorityID
 	}
 	return record, nil
 }
