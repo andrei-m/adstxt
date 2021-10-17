@@ -131,6 +131,7 @@ func stripWhitespace(line string) string {
 	}, line)
 }
 
+// Parse parses ads.txt from in
 func Parse(in io.Reader) (AdsTxt, error) {
 	variables := map[Variable][]string{}
 	records := []Record{}

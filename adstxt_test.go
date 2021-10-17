@@ -1,6 +1,7 @@
 package adstxt
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -215,6 +216,27 @@ subdomain=bar #comment`)
 		assert.NoError(t, err)
 		assert.Empty(t, adstxt.Records)
 	})
+}
+
+func ExampleParse(t *testing.T) {
+	rawAdsTxt := strings.NewReader(`# comment
+foo,bar,DIRECT,baz
+one,two,RESELLER
+three,four,RESELLER
+
+# another comment
+contact=foo
+contact=foobar
+subdomain=bar #comment`)
+	adstxt, err := Parse(rawAdsTxt)
+
+	fmt.Printf("error: %t\n", err == nil)
+	fmt.Printf("record count: %d\n", len(adstxt.Records))
+	fmt.Printf("variable count: %d\n", len(adstxt.Variables))
+	// Output:
+	// error: false
+	// record count: 3
+	// variable count: 2
 }
 
 func Test_Record_isPlaceholder(t *testing.T) {
