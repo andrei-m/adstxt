@@ -152,6 +152,16 @@ subdomain=bar #comment`)
 		assert.Equal(t, errUnrecognizedRelationshipType, err)
 	})
 
+	t.Run("missing ad system domain", func(t *testing.T) {
+		_, err := Parse(strings.NewReader("foo,,DIRECT"))
+		assert.Equal(t, errNoSellerAccountID, err)
+	})
+
+	t.Run("missing seller account ID", func(t *testing.T) {
+		_, err := Parse(strings.NewReader(",foo,DIRECT"))
+		assert.Equal(t, errNoAdSystemDomain, err)
+	})
+
 	t.Run("record with certification authority ID", func(t *testing.T) {
 		adstxt, err := Parse(strings.NewReader("foo,bar,RESELLER,baz"))
 		assert.NoError(t, err)

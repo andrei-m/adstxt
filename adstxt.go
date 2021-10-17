@@ -69,6 +69,8 @@ func parseVariable(line string) (Variable, string) {
 
 var (
 	errNoRecord                     = errors.New("no record")
+	errNoAdSystemDomain             = errors.New("ad system domain is required")
+	errNoSellerAccountID            = errors.New("seller account ID is required")
 	errUnrecognizedRelationshipType = errors.New("unrecognized relationship type is neither DIRECT or RESELLER")
 )
 
@@ -86,9 +88,15 @@ func parseRecord(line string) (Record, error) {
 	if err != nil {
 		return Record{}, err
 	}
+	if len(decodedAdSystemDomain) == 0 {
+		return Record{}, errNoAdSystemDomain
+	}
 	decodedSellerAccountId, err := url.QueryUnescape(recordSplit[1])
 	if err != nil {
 		return Record{}, err
+	}
+	if len(decodedSellerAccountId) == 0 {
+		return Record{}, errNoSellerAccountID
 	}
 
 	record := Record{
