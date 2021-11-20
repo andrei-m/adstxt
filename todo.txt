@@ -1,5 +1,4 @@
 Resolving:
-* success handling
 * verification of the 'text/plain' Content-Type
 * redirect handling
 * redirect handling to external domains (single 'hop')
