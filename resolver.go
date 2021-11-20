@@ -23,6 +23,9 @@ func Resolve(doer Doer, host string) (AdsTxt, error) {
 	if err != nil {
 		return AdsTxt{}, errRequestFailed
 	}
+	if resp.StatusCode == 404 {
+		return AdsTxt{}, nil
+	}
 	//TODO: handle at most one redirect
 	if !isHTTPSuccess(resp) {
 		return AdsTxt{}, err
