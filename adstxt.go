@@ -3,6 +3,7 @@ package adstxt
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"net/url"
 	"strings"
@@ -12,6 +13,18 @@ import (
 type AdsTxt struct {
 	Records   []Record
 	Variables map[Variable][]string
+}
+
+func (a AdsTxt) String() string {
+	recordSuffix := ""
+	if len(a.Records) != 1 {
+		recordSuffix = "s"
+	}
+	variableSuffix := ""
+	if len(a.Variables) != 1 {
+		variableSuffix = "s"
+	}
+	return fmt.Sprintf("%d record%s, %d variable%s", len(a.Records), recordSuffix, len(a.Variables), variableSuffix)
 }
 
 type Record struct {
