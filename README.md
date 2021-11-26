@@ -30,3 +30,5 @@ three,four,RESELLER`)
 adstxt, err := adstxt.Parse(rawAdsTxt)
 ```
 
+See the GoDoc link for a description of the parsed ads.txt format.
+
