@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"golang.org/x/net/publicsuffix"
 )
@@ -13,7 +14,17 @@ var (
 	errRequestFailed             = errors.New("ads.txt request was not successful")
 	errMultipleExternalRedirects = errors.New("at most one redirect to a destination outside the original root domain is allowed")
 	errNotTextPlain              = errors.New("Content-Type must be 'text/plain'")
+
+	defaultClient = &http.Client{
+		Timeout:       1 * time.Minute,
+		CheckRedirect: CheckRedirect,
+	}
 )
+
+// DefaultResolve requests and parses ads.txt using a default HTTP client
+func DefaultResolve(host string) (AdsTxt, error) {
+	return Resolve(defaultClient, host)
+}
 
 // Resolve requests and parses ads.txt from the provided host
 func Resolve(doer Doer, host string) (AdsTxt, error) {
