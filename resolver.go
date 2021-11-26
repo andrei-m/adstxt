@@ -4,6 +4,9 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 var errRequestFailed = errors.New("ads.txt request was not successful")
@@ -36,4 +39,15 @@ func Resolve(doer Doer, host string) (AdsTxt, error) {
 
 func isHTTPSuccess(resp *http.Response) bool {
 	return resp.StatusCode >= 200 && resp.StatusCode < 300
+}
+
+func extractRootDomain(host string) string {
+	suffix, _ := publicsuffix.PublicSuffix(host)
+	suffixElements := strings.Split(suffix, ".")
+	hostElements := strings.Split(host, ".")
+	lastPreSuffixElementIdx := len(hostElements) - len(suffixElements) - 1
+	if lastPreSuffixElementIdx >= 0 {
+		return strings.Join(append([]string{hostElements[lastPreSuffixElementIdx]}, suffixElements...), ".")
+	}
+	return suffix
 }
