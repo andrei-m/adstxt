@@ -1,2 +1,0 @@
-Resolving:
-* verification of the 'text/plain' Content-Type

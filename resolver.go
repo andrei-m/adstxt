@@ -12,6 +12,7 @@ import (
 var (
 	errRequestFailed             = errors.New("ads.txt request was not successful")
 	errMultipleExternalRedirects = errors.New("at most one redirect to a destination outside the original root domain is allowed")
+	errNotTextPlain              = errors.New("Content-Type must be 'text/plain'")
 )
 
 // Resolve requests and parses ads.txt from the provided host
@@ -34,6 +35,9 @@ func Resolve(doer Doer, host string) (AdsTxt, error) {
 	}
 	if !isHTTPSuccess(resp) {
 		return AdsTxt{}, err
+	}
+	if resp.Header.Get(http.CanonicalHeaderKey("Content-Type")) != "text/plain" {
+		return AdsTxt{}, errNotTextPlain
 	}
 	defer resp.Body.Close()
 	return Parse(resp.Body)
